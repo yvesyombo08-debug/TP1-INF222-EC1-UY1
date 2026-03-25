@@ -1,0 +1,14 @@
+{
+  "name": "blog-api-inf222",
+  "version": "1.0.0",
+  "description": "API Backend Blog - TAF1 INF222 EC1",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "swagger-ui-express": "^5.0.0",
+    "uuid": "^9.0.0"
+  }
+}

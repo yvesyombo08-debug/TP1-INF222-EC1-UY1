@@ -1,0 +1,247 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Blog INF222",
+    "description": "API Backend pour la gestion d'un blog simple — TAF1 INF222 EC1",
+    "version": "1.0.0",
+    "contact": {
+      "name": "INF222 - Développement Backend"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Serveur local"
+    }
+  ],
+  "paths": {
+    "/api/articles": {
+      "get": {
+        "summary": "Récupérer tous les articles",
+        "description": "Retourne la liste complète des articles, avec filtres optionnels.",
+        "tags": ["Articles"],
+        "parameters": [
+          {
+            "name": "categorie",
+            "in": "query",
+            "description": "Filtrer par catégorie",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "auteur",
+            "in": "query",
+            "description": "Filtrer par auteur",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filtrer par date (format YYYY-MM-DD)",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des articles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "articles": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Article" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "post": {
+        "summary": "Créer un nouvel article",
+        "tags": ["Articles"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ArticleInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Article créé avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "id": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Données invalides" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+    "/api/articles/search": {
+      "get": {
+        "summary": "Rechercher des articles par titre ou contenu",
+        "tags": ["Articles"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Texte à rechercher dans le titre ou le contenu",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Articles correspondant à la recherche",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "articles": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Article" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Paramètre query manquant" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+    "/api/articles/{id}": {
+      "get": {
+        "summary": "Récupérer un article par ID",
+        "tags": ["Articles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article trouvé",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Article" }
+              }
+            }
+          },
+          "404": { "description": "Article introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "put": {
+        "summary": "Modifier un article existant",
+        "tags": ["Articles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ArticleUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Article mis à jour" },
+          "404": { "description": "Article introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer un article",
+        "tags": ["Articles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Article supprimé" },
+          "404": { "description": "Article introuvable" },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Article": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "titre": { "type": "string", "example": "Introduction à Node.js" },
+          "contenu": { "type": "string", "example": "Node.js est un environnement d'exécution..." },
+          "auteur": { "type": "string", "example": "Charles" },
+          "date": { "type": "string", "format": "date", "example": "2026-03-19" },
+          "categorie": { "type": "string", "example": "Technologie" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["nodejs", "backend", "web"]
+          },
+          "created_at": { "type": "string" },
+          "updated_at": { "type": "string" }
+        }
+      },
+      "ArticleInput": {
+        "type": "object",
+        "required": ["titre", "contenu", "auteur", "date", "categorie"],
+        "properties": {
+          "titre": { "type": "string", "example": "Introduction à Node.js" },
+          "contenu": { "type": "string", "example": "Node.js est un environnement d'exécution JavaScript..." },
+          "auteur": { "type": "string", "example": "Charles" },
+          "date": { "type": "string", "format": "date", "example": "2026-03-19" },
+          "categorie": { "type": "string", "example": "Technologie" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "example": ["nodejs", "backend"]
+          }
+        }
+      },
+      "ArticleUpdate": {
+        "type": "object",
+        "properties": {
+          "titre": { "type": "string" },
+          "contenu": { "type": "string" },
+          "categorie": { "type": "string" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
